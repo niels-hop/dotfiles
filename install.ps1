@@ -17,15 +17,15 @@ if (Test-Path $tmuxConfigPath) {
     Move-Item $tmuxConfigPath "$tmuxConfigPath.backup" -Force
 }
 
-# Create symbolic link (requires admin privileges)
+# Try symbolic link first, fallback to hard copy if no admin rights
 try {
-    New-Item -ItemType SymbolicLink -Path $tmuxConfigPath -Target $sourcePath -Force | Out-Null
-    Write-Host "✅ Tmux config linked" -ForegroundColor Green
+    New-Item -ItemType SymbolicLink -Path $tmuxConfigPath -Target $sourcePath -Force -ErrorAction Stop | Out-Null
+    Write-Host "✅ Tmux config linked (symbolic link)" -ForegroundColor Green
 } catch {
-    Write-Host "❌ Failed to create symbolic link. Running as Administrator required." -ForegroundColor Red
-    Write-Host "   Alternative: Copy the file manually:" -ForegroundColor Yellow
-    Write-Host "   Copy-Item '$sourcePath' '$tmuxConfigPath'" -ForegroundColor Gray
-    exit 1
+    Write-Host "⚠️  No admin rights for symbolic link, copying file instead..." -ForegroundColor Yellow
+    Copy-Item $sourcePath $tmuxConfigPath -Force
+    Write-Host "✅ Tmux config copied" -ForegroundColor Green
+    Write-Host "   Note: You'll need to manually sync changes from dotfiles folder" -ForegroundColor Gray
 }
 
 # Install TPM if not present

@@ -11,7 +11,7 @@ cd ~/dotfiles
 ./install.sh
 ```
 
-### Windows (PowerShell - Run as Administrator)
+### Windows (PowerShell - No admin rights required)
 ```powershell
 git clone https://github.com/niels-hop/dotfiles.git $env:USERPROFILE\dotfiles
 cd $env:USERPROFILE\dotfiles
