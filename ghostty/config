@@ -1,0 +1,5 @@
+theme = catppuccin-frappe.conf
+font-size = 18
+keybind = shift+enter=text:\x1b\r
+macos-option-as-alt = true
+window-save-state = always

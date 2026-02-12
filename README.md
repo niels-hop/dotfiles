@@ -1,40 +1,37 @@
 # Dotfiles
 
-Personal configuration files.
+Personal configuration files for tmux, Ghostty, zsh, and spaceship prompt.
 
 ## Quick Setup
 
-### macOS / Linux
 ```bash
 git clone https://github.com/niels-hop/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 ```
 
-### Windows (PowerShell - No admin rights required)
-```powershell
-git clone https://github.com/niels-hop/dotfiles.git $env:USERPROFILE\dotfiles
-cd $env:USERPROFILE\dotfiles
-.\install.ps1
-```
+## What's Included
 
-## Manual Setup
+| Config | Source | Symlink target |
+|---|---|---|
+| tmux | `tmux.conf` | `~/.tmux.conf` |
+| Ghostty | `ghostty/` | `~/.config/ghostty/config` + `themes/` |
+| zsh | `zshrc` | `~/.zshrc` |
+| Spaceship | `spaceshiprc.zsh` | `~/.spaceshiprc.zsh` |
 
-### Tmux
-```bash
-ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
+## Machine-specific config
 
-### Install plugins
-In tmux, press `C-Space I` (capital i) to install plugins.
+Create `~/.zshrc.local` for machine-specific PATH entries, tool configs, etc. This file is sourced at the end of `.zshrc` and is not tracked by git.
 
-## Usage
-- `C-Space r` - Reload config
-- `C-Space s` - Session picker  
-- `C-Space w` - Window picker
-- `C-Space h/j/k/l` - Navigate panes (vim-style)
-- `C-Space S` - New session
-- `C-Space W` - New window
-- `C-Space R` - Rename session
-- `C-Space ,` - Rename window
+## Tmux keybindings
+
+Prefix: `C-Space`
+
+- `r` - Reload config
+- `s` / `w` - Session / window picker
+- `h/j/k/l` - Navigate panes (vim-style)
+- `S` / `W` - New session / window
+- `R` / `,` - Rename session / window
+- `c` - New window (current path)
+- `-` / `\` - Split (current path)
+- `I` - Install plugins (TPM)

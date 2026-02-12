@@ -2,35 +2,58 @@
 
 # Dotfiles Installation Script (macOS/Linux)
 
-echo "🚀 Installing dotfiles..."
+set -e
 
-# Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Create symlink for tmux config
-echo "📝 Setting up tmux configuration..."
-if [ -f ~/.tmux.conf ]; then
-    echo "⚠️  Backing up existing ~/.tmux.conf to ~/.tmux.conf.backup"
-    mv ~/.tmux.conf ~/.tmux.conf.backup
+backup_and_link() {
+    local source="$1"
+    local target="$2"
+    local name="$3"
+
+    if [ -L "$target" ]; then
+        rm "$target"
+    elif [ -e "$target" ]; then
+        echo "  Backing up existing $target to ${target}.backup"
+        mv "$target" "${target}.backup"
+    fi
+
+    ln -sf "$source" "$target"
+    echo "  $name linked"
+}
+
+echo "Installing dotfiles..."
+
+# Tmux
+echo "Tmux:"
+backup_and_link "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf" "tmux.conf"
+
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    echo "  Installing TPM..."
+    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 fi
 
-ln -sf "$DOTFILES_DIR/tmux.conf" ~/.tmux.conf
-echo "✅ Tmux config linked"
+# Ghostty
+echo "Ghostty:"
+mkdir -p "$HOME/.config/ghostty"
+backup_and_link "$DOTFILES_DIR/ghostty/config" "$HOME/.config/ghostty/config" "config"
+backup_and_link "$DOTFILES_DIR/ghostty/themes" "$HOME/.config/ghostty/themes" "themes"
 
-# Install TPM if not present
-if [ ! -d ~/.tmux/plugins/tpm ]; then
-    echo "📦 Installing TPM (Tmux Plugin Manager)..."
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    echo "✅ TPM installed"
-else
-    echo "✅ TPM already installed"
+# Zsh
+echo "Zsh:"
+backup_and_link "$DOTFILES_DIR/zshrc" "$HOME/.zshrc" "zshrc"
+
+# Spaceship
+echo "Spaceship:"
+backup_and_link "$DOTFILES_DIR/spaceshiprc.zsh" "$HOME/.spaceshiprc.zsh" "spaceshiprc.zsh"
+
+if ! command -v spaceship &>/dev/null && command -v brew &>/dev/null; then
+    echo "  Installing spaceship prompt via brew..."
+    brew install spaceship
 fi
 
 echo ""
-echo "🎉 Installation complete!"
-echo ""
-echo "📋 Next steps:"
-echo "  1. Start tmux: tmux"
-echo "  2. Install plugins: Press C-Space I (Ctrl+Space, then I)"
-echo "  3. Reload config: Press C-Space r"
-echo ""
+echo "Done! Next steps:"
+echo "  1. Create ~/.zshrc.local for machine-specific config (PATH, tools, etc.)"
+echo "  2. Restart your shell: exec zsh"
+echo "  3. In tmux: press C-Space I to install plugins"
